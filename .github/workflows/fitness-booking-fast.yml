@@ -1,0 +1,33 @@
+name: Ultra-Fast Fitness Booking
+
+on:
+  schedule:
+    # 12:00 PM IST (6:30 AM UTC)
+    - cron: '30 6 * * *'
+    # 5:00 PM IST (11:30 AM UTC)  
+    - cron: '30 11 * * *'
+  workflow_dispatch:
+
+jobs:
+  fitness-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install axios node-telegram-bot-api node-schedule
+
+      - name: Run booking bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GITAM_EMAIL: ${{ secrets.GITAM_EMAIL }}
+          GITAM_PASSWORD: ${{ secrets.GITAM_PASSWORD }}
+        run: timeout 300 node fitness-bot-fast.js || true
